@@ -1,0 +1,13 @@
+product_id,product_name,flavor_profile,base_price,is_seasonal,season,is_crowd_favorite,is_active
+1,Matcha White Chocolate,tea_based,5.0,False,,False,True
+2,Hojicha White Chocolate,tea_based,5.0,False,,False,True
+3,Strawberry Milk Tea,tea_based,5.0,False,,True,True
+4,Thai Tea,tea_based,5.0,False,,False,True
+5,Vietnamese Coffee,nutty_roasted,5.0,False,,False,True
+6,Black Sesame Dark Chocolate,nutty_roasted,5.0,False,,False,True
+7,Honey Sesame,nutty_roasted,5.0,False,,True,True
+8,Pandan Coconut,sweet_nostalgic,5.0,False,,True,True
+9,Classic Chocolate Chip,sweet_nostalgic,5.0,False,,False,True
+10,Bolo Bao,sweet_nostalgic,5.0,True,spring_summer,False,True
+11,Sweet Corn,sweet_nostalgic,5.0,True,fall_winter,False,True
+12,Vietnamese Fried Banana,sweet_nostalgic,5.0,False,,False,True

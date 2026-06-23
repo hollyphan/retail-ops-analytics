@@ -1,0 +1,39 @@
+event_id,event_name,event_type,event_date,neighborhood,duration_hours,booth_fee,estimated_attendance,weather_condition
+1,Online Pickup,online_pickup,,Home Kitchen,,0.0,,sunny
+2,North Park Cafe Popup,cafe_popup,2024-01-06,North Park,3.0,0.0,107,cloudy
+3,Convoy Cafe Popup,cafe_popup,2024-01-20,Convoy,3.0,0.0,68,sunny
+4,North Park Cafe Popup,cafe_popup,2024-02-03,North Park,4.5,0.0,107,cloudy
+5,Convoy Cafe Popup,cafe_popup,2024-02-17,Convoy,3.0,0.0,97,rainy
+6,North Park Cafe Popup,cafe_popup,2024-03-02,North Park,3.0,0.0,65,sunny
+7,Convoy Cafe Popup,cafe_popup,2024-03-16,Convoy,4.5,0.0,98,sunny
+8,North Park Cafe Popup,cafe_popup,2024-03-30,North Park,3.0,0.0,105,sunny
+9,Convoy Cafe Popup,cafe_popup,2024-04-13,Convoy,4.5,0.0,86,cloudy
+10,North Park Cafe Popup,cafe_popup,2024-04-27,North Park,4.5,0.0,77,sunny
+11,Convoy Cafe Popup,cafe_popup,2024-05-11,Convoy,3.0,0.0,108,rainy
+12,North Park Cafe Popup,cafe_popup,2024-05-25,North Park,4.5,0.0,87,rainy
+13,Convoy Cafe Popup,cafe_popup,2024-06-08,Convoy,3.0,0.0,73,sunny
+14,North Park Cafe Popup,cafe_popup,2024-06-22,North Park,4.0,0.0,66,hot
+15,Convoy Cafe Popup,cafe_popup,2024-07-06,Convoy,3.0,0.0,82,sunny
+16,North Park Cafe Popup,cafe_popup,2024-07-20,North Park,4.5,0.0,76,rainy
+17,Convoy Cafe Popup,cafe_popup,2024-08-03,Convoy,4.5,0.0,89,rainy
+18,North Park Cafe Popup,cafe_popup,2024-08-17,North Park,4.0,0.0,65,sunny
+19,Convoy Cafe Popup,cafe_popup,2024-08-31,Convoy,4.5,0.0,99,cloudy
+20,North Park Cafe Popup,cafe_popup,2024-09-14,North Park,4.0,0.0,96,rainy
+21,Convoy Cafe Popup,cafe_popup,2024-09-28,Convoy,3.0,0.0,62,sunny
+22,North Park Cafe Popup,cafe_popup,2024-10-12,North Park,4.0,0.0,65,cloudy
+23,Convoy Cafe Popup,cafe_popup,2024-10-26,Convoy,3.0,0.0,84,rainy
+24,North Park Cafe Popup,cafe_popup,2024-11-09,North Park,4.5,0.0,113,sunny
+25,Convoy Cafe Popup,cafe_popup,2024-11-23,Convoy,4.0,0.0,82,sunny
+26,North Park Cafe Popup,cafe_popup,2024-12-07,North Park,4.0,0.0,104,sunny
+27,Convoy Cafe Popup,cafe_popup,2024-12-21,Convoy,4.5,0.0,64,hot
+28,Lunar New Year Festival,festival,2024-02-10,Convoy,6.0,150.0,800,cloudy
+29,North Park Farmers Market,market,2024-03-16,North Park,4.0,60.0,300,sunny
+30,San Diego Night Market,festival,2024-04-20,Little Italy,5.0,200.0,1200,cloudy
+31,Asian Food Fest,festival,2024-05-18,Kearny Mesa,6.0,175.0,900,sunny
+32,Mission Hills Market,market,2024-06-08,Mission Hills,4.0,60.0,250,sunny
+33,Summer Night Bazaar,festival,2024-07-13,Barrio Logan,5.0,125.0,700,hot
+34,Little Italy Mercato,market,2024-08-17,Little Italy,4.0,75.0,400,cloudy
+35,Mid-Autumn Festival,festival,2024-09-14,Convoy,5.0,150.0,850,cloudy
+36,Fall Harvest Market,market,2024-10-05,North Park,4.0,60.0,280,cloudy
+37,Holiday Night Market,festival,2024-11-23,Little Italy,6.0,200.0,1000,rainy
+38,Winter Pop-Up,festival,2024-12-14,Convoy,5.0,125.0,600,cloudy
