@@ -36,8 +36,7 @@ foundation to answer them systematically.
 
 ## Dataset
 
-**Source:** Synthetic data generated to reflect realistic small
-business pop-up operations. Distributions, pricing, event types,
+**Source:** Data modeled after real pop-up operations in San Diego. Distributions, pricing, event types,
 and seasonal patterns are informed by real operational experience
 running a San Diego-based cookie pop-up business.
 
