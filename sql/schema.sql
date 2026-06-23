@@ -1,19 +1,15 @@
--- =============================================================
 -- schema.sql
 -- Retail Demand Forecasting & Inventory Optimization
 -- Milk & Bánh Pop-Up Analytics
--- =============================================================
+--
 -- Run this file to create the database and all tables.
 -- Safe to re-run: DROP TABLE IF EXISTS before each CREATE.
 -- Execute in order — foreign key dependencies respected.
--- =============================================================
 
 CREATE DATABASE IF NOT EXISTS retail_ops_analytics;
 USE retail_ops_analytics;
 
--- =============================================================
--- DROP ORDER: child tables first, then parent tables
--- =============================================================
+-- Drop order: child tables first to avoid FK constraint errors
 
 DROP TABLE IF EXISTS inventory;
 DROP TABLE IF EXISTS order_items;
@@ -22,12 +18,9 @@ DROP TABLE IF EXISTS customers;
 DROP TABLE IF EXISTS events;
 DROP TABLE IF EXISTS products;
 
--- =============================================================
--- TABLE: products
+-- products
 -- Cookie catalog with flavor profile and seasonal metadata.
--- All cookies priced at $5.00.
--- 12 flavors across 3 flavor profiles.
--- =============================================================
+-- All cookies priced at $5.00. 12 flavors across 3 flavor profiles.
 
 CREATE TABLE products (
     product_id        INT          NOT NULL AUTO_INCREMENT,
@@ -54,12 +47,10 @@ CREATE TABLE products (
     )
 );
 
--- =============================================================
--- TABLE: events
+-- events
 -- All sales contexts: cafe pop-ups, festivals, markets,
 -- and the dummy 'Online Pickup' event for online orders.
 -- North Park and Convoy are the two recurring cafe locations.
--- =============================================================
 
 CREATE TABLE events (
     event_id             INT          NOT NULL AUTO_INCREMENT,
@@ -84,12 +75,9 @@ CREATE TABLE events (
     )
 );
 
--- =============================================================
--- TABLE: customers
+-- customers
 -- Customer records with acquisition context.
 -- acquisition_event_id tracks where the customer first purchased.
--- Depends on: events
--- =============================================================
 
 CREATE TABLE customers (
     customer_id          INT          NOT NULL AUTO_INCREMENT,
@@ -107,13 +95,9 @@ CREATE TABLE customers (
         ON UPDATE CASCADE
 );
 
--- =============================================================
--- TABLE: orders
+-- orders
 -- One record per customer transaction.
--- All orders tied to an event — online orders use the
--- dummy 'Online Pickup' event.
--- Depends on: customers, events
--- =============================================================
+-- Online orders use the dummy 'Online Pickup' event.
 
 CREATE TABLE orders (
     order_id      INT         NOT NULL AUTO_INCREMENT,
@@ -136,19 +120,13 @@ CREATE TABLE orders (
         ON UPDATE CASCADE
 );
 
--- =============================================================
--- TABLE: order_items
+-- order_items
 -- One record per cookie flavor per order.
 -- Packs explode into individual flavor rows.
--- purchase_type tracks whether cookie was bought individually
--- or as part of a 3-pack or 6-pack.
 -- unit_price reflects per-cookie price within purchase type:
 --   individual : $5.00
 --   3_pack     : $4.33 (13.00 / 3)
 --   6_pack     : $4.00 (24.00 / 6)
--- line_total = quantity * unit_price
--- Depends on: orders, products
--- =============================================================
 
 CREATE TABLE order_items (
     order_item_id INT          NOT NULL AUTO_INCREMENT,
@@ -176,15 +154,10 @@ CREATE TABLE order_items (
         ON UPDATE CASCADE
 );
 
--- =============================================================
--- TABLE: inventory
+-- inventory
 -- Production vs. sales tracking per product per event.
--- quantity_wasted is DERIVED: quantity_produced - quantity_sold
--- Do NOT store quantity_wasted as a column.
--- Online Pickup event excluded from inventory tracking —
--- online orders are made to order, no production waste.
--- Depends on: events, products
--- =============================================================
+-- quantity_wasted is derived: quantity_produced - quantity_sold
+-- Online Pickup event excluded — online orders are made to order.
 
 CREATE TABLE inventory (
     inventory_id      INT NOT NULL AUTO_INCREMENT,
