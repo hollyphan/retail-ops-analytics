@@ -45,7 +45,7 @@ PURCHASE_TYPE_WEIGHTS = [0.45, 0.35, 0.20]
 
 
 def write_csv(filepath, fieldnames, rows):
-    with open(filepath, "w", newline="", encoding="utf-8") as f:
+    with open(filepath, "w", newline="\n", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
@@ -177,6 +177,13 @@ def generate_products():
             "is_active": True,
         },
     ]
+
+    for p in products:
+        p["is_seasonal"]       = 1 if p["is_seasonal"] else 0
+        p["is_crowd_favorite"] = 1 if p["is_crowd_favorite"] else 0
+        p["is_active"]         = 1 if p["is_active"] else 0
+        if p["season"] == "":
+            p["season"] = None
 
     write_csv(
         PRODUCTS_FILE,
@@ -527,5 +534,20 @@ def main():
     print("\ndone. all 6 CSVs written to data/")
 
 
+def fix_line_endings():
+    files = [
+        "data/products.csv",
+        "data/events.csv",
+        "data/customers.csv",
+        "data/orders.csv",
+        "data/order_items.csv",
+        "data/inventory.csv",
+    ]
+    for f in files:
+        content = open(f, "rb").read()
+        open(f, "wb").write(content.replace(b"\r\n", b"\n"))
+
 if __name__ == "__main__":
     main()
+    fix_line_endings()
+    print("line endings normalized")
