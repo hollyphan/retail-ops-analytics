@@ -38,6 +38,9 @@ ORDER BY
 -- - Both DENSE_RANK() calls order DESC so rank 1 = best in both
 --   metrics, keeping rank_gap's sign interpretable (negative =
 --   high volume/low revenue, positive = high revenue/low volume).
+-- - Casts ranks to SIGNED before subtraction because MySQL returns
+--   DENSE_RANK() as an unsigned integer. Without casting, negative
+--   rank gaps can trigger unsigned arithmetic errors.
 
 WITH product_metrics AS (
     SELECT
@@ -74,10 +77,12 @@ SELECT
     revenue,
     volume_rank,
     revenue_rank,
-    volume_rank - revenue_rank AS rank_gap
+    CAST(volume_rank AS SIGNED) - CAST(revenue_rank AS SIGNED) AS rank_gap
 FROM ranked_products
 WHERE volume_rank <> revenue_rank
-ORDER BY ABS(volume_rank - revenue_rank) DESC;
+ORDER BY ABS(
+    CAST(volume_rank AS SIGNED) - CAST(revenue_rank AS SIGNED)
+) DESC;
 
 
 -- Query 3: Seasonal Demand Pattern Analysis
