@@ -8,7 +8,7 @@ events, and customer segments drive profitability, and generating
 production recommendations to minimize waste and maximize revenue
 per event.
 
-The analysis covers 18 months of simulated sales, inventory, and
+The analysis covers 12 months of simulated sales, inventory, and
 event performance data across six normalized tables, producing
 actionable recommendations a business operator could act on
 immediately.
@@ -41,21 +41,21 @@ and seasonal patterns are informed by real operational experience
 running a San Diego-based cookie pop-up business.
 
 **Scale:**
-- ~50–60 events across 18 months
-- ~1,500–2,500 orders
-- ~4,000–7,000 order line items
+- 38 events across 12 months (2024 calendar year)
+- 1,999 orders
+- 5,372 order line items
 - 6 normalized tables
 
 **Tables:**
 
-| Table | Description | Rows (approx) |
+| Table | Description | Rows (actual) |
 |---|---|---|
-| `products` | Cookie catalog with flavor profiles and seasonal flags | ~12 |
-| `customers` | Customer records with acquisition context | ~800–1,200 |
-| `events` | Pop-up events with cost and operational data | ~55 |
-| `orders` | One record per customer transaction | ~2,000 |
-| `order_items` | One record per cookie flavor per order | ~5,500 |
-| `inventory` | Production vs. sales by flavor by event | ~500 |
+| `products` | Cookie catalog with flavor profiles and seasonal flags | 12 |
+| `customers` | Customer records with acquisition context | 1,000 |
+| `events` | Pop-up events with cost and operational data | 38 |
+| `orders` | One record per customer transaction | 1,999 |
+| `order_items` | One record per cookie flavor per order | 5,372 |
+| `inventory` | Production vs. sales by flavor by event | 407 |
 
 ---
 
@@ -83,7 +83,7 @@ individually, $13.00 for a 3-pack, or $24.00 for a 6-pack.
 
 ## Data Model
 
-*ERD diagram to be added after schema validation.*
+*ERD diagram to be added before Project 1 is marked complete.*
 
 **Key relationships:**
 - One event contains many orders
@@ -98,16 +98,18 @@ individually, $13.00 for a 3-pack, or $24.00 for a 6-pack.
 
 ## SQL Techniques Demonstrated
 
-| Technique | Where Used |
-|---|---|
-| Multi-table JOINs | All analysis files |
-| CTEs | Demand trends, forecasting, cohort logic |
-| Window functions (LAG, RANK, rolling avg) | MoM trends, event ranking, running totals |
-| CASE WHEN | Segmentation, waste classification, seasonality |
-| Subqueries | Product mix analysis |
-| Aggregations and GROUP BY | Revenue and inventory summaries |
-| Date functions | Seasonality, month-over-month analysis |
-| Derived metrics | Waste rate, revenue per hour, profitability after booth fees |
+| Technique | Where Used | Status |
+|---|---|---|
+| Multi-table JOINs | 01, 02 | Demonstrated |
+| CTEs | 01, 02 | Demonstrated |
+| Window functions (LAG, DENSE_RANK) | 01 | Demonstrated |
+| CASE WHEN | 01, 02 | Demonstrated |
+| Aggregations and GROUP BY | 01, 02 | Demonstrated |
+| Date functions | 01 | Demonstrated |
+| Derived metrics (waste rate, sell-through %) | 01, 02 | Demonstrated |
+| Rolling averages, RANK | 05 (forecasting) | Planned |
+| Subqueries, self-joins | 04 (product mix) | Planned |
+| Revenue-per-hour, booth-fee-adjusted profit | 03 (event performance) | Planned |
 
 ---
 
@@ -153,7 +155,6 @@ by flavor for upcoming events.
 - MySQL 9.7
 - Python (synthetic data generation)
 - TablePlus
-- Tableau
 
 ---
 
