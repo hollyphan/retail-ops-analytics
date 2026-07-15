@@ -41,3 +41,34 @@ WHERE i.quantity_produced > 0
 GROUP BY p.product_id, p.product_name
 ORDER BY overall_sell_through_pct DESC,
          sold_through_event_pct DESC;
+
+-- Business Question: How do different event types affect inventory efficiency?
+-- Approach: Join inventory to events and compare total produced, total sold,
+-- leftover units, and sell-through % by event type, using inventory rows
+-- (one product per event) as the unit of analysis. Sell-through % is
+-- SUM(sold)/SUM(produced), not an average of per-row rates, to weight larger
+-- production runs appropriately. Leftover units reflect production scale more
+-- than efficiency; sell-through % is the actual efficiency metric.
+
+SELECT
+    e.event_type,
+    COUNT(*) AS inventory_records,
+    SUM(i.quantity_produced) AS total_produced,
+    SUM(i.quantity_sold) AS total_sold,
+    SUM(i.quantity_produced - i.quantity_sold) AS total_leftover_units,
+    ROUND(
+        SUM(i.quantity_sold) * 100.0
+        / SUM(i.quantity_produced),
+        2
+    ) AS overall_sell_through_pct,
+    ROUND(
+        AVG(i.quantity_produced - i.quantity_sold),
+        2
+    ) AS avg_leftover_per_product
+FROM inventory AS i
+JOIN events AS e
+    ON i.event_id = e.event_id
+WHERE i.quantity_produced > 0
+GROUP BY e.event_type
+ORDER BY overall_sell_through_pct DESC,
+         avg_leftover_per_product ASC;
