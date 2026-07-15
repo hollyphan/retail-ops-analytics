@@ -72,3 +72,38 @@ WHERE i.quantity_produced > 0
 GROUP BY e.event_type
 ORDER BY overall_sell_through_pct DESC,
          avg_leftover_per_product ASC;
+
+-- Supporting Check: Does estimated attendance explain the demand and
+-- efficiency differences seen across event types in Query 2?
+-- Approach: Aggregate inventory to the event grain first (CTE), then join to
+-- events and compare average estimated attendance, average units sold per
+-- product (event-weighted average, not volume-weighted), and overall
+-- sell-through % by event type. Attendance tracks demand intensity
+-- monotonically, but does not fully explain sell-through efficiency —
+-- market events break the expected ordering, with n=4 limiting confidence
+-- in that result.
+
+WITH event_sales AS (
+    SELECT
+        event_id,
+        SUM(quantity_sold) AS total_event_sales,
+        SUM(quantity_produced) AS total_event_produced,
+        COUNT(*) AS products_offered
+    FROM inventory
+    GROUP BY event_id
+)
+SELECT
+    e.event_type,
+    COUNT(*) AS events,
+    ROUND(AVG(e.estimated_attendance), 0) AS avg_estimated_attendance,
+    ROUND(AVG(es.total_event_sales / es.products_offered), 2) AS avg_units_sold_per_product,
+    ROUND(
+        SUM(es.total_event_sales) * 100.0 /
+        SUM(es.total_event_produced),
+        2
+    ) AS overall_sell_through_pct
+FROM events e
+JOIN event_sales es
+    ON e.event_id = es.event_id
+GROUP BY e.event_type
+ORDER BY avg_estimated_attendance DESC;
