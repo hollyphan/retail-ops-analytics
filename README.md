@@ -83,7 +83,69 @@ individually, $13.00 for a 3-pack, or $24.00 for a 6-pack.
 
 ## Data Model
 
-*ERD diagram to be added before Project 1 is marked complete.*
+```mermaid
+erDiagram
+    PRODUCTS ||--o{ ORDER_ITEMS : contains
+    PRODUCTS ||--o{ INVENTORY : tracks
+    EVENTS ||--o{ CUSTOMERS : acquires
+    EVENTS ||--o{ ORDERS : hosts
+    EVENTS ||--o{ INVENTORY : tracks
+    CUSTOMERS ||--o{ ORDERS : places
+    ORDERS ||--o{ ORDER_ITEMS : contains
+
+    PRODUCTS {
+        int product_id PK
+        string product_name
+        string flavor_profile
+        decimal base_price
+        boolean is_seasonal
+        string season
+        boolean is_crowd_favorite
+        boolean is_active
+    }
+    EVENTS {
+        int event_id PK
+        string event_name
+        string event_type
+        date event_date
+        string neighborhood
+        decimal duration_hours
+        decimal booth_fee
+        int estimated_attendance
+        string weather_condition
+    }
+    CUSTOMERS {
+        int customer_id PK
+        string first_name
+        string email
+        int acquisition_event_id FK
+        date acquisition_date
+        string zip_code
+    }
+    ORDERS {
+        int order_id PK
+        date order_date
+        int customer_id FK
+        int event_id FK
+        string order_channel
+    }
+    ORDER_ITEMS {
+        int order_item_id PK
+        int order_id FK
+        int product_id FK
+        string purchase_type
+        int quantity
+        decimal unit_price
+        decimal line_total
+    }
+    INVENTORY {
+        int inventory_id PK
+        int event_id FK
+        int product_id FK
+        int quantity_produced
+        int quantity_sold
+    }
+```
 
 **Key relationships:**
 - One event contains many orders
@@ -107,9 +169,9 @@ individually, $13.00 for a 3-pack, or $24.00 for a 6-pack.
 | Aggregations and GROUP BY | 01, 02 | Demonstrated |
 | Date functions | 01 | Demonstrated |
 | Derived metrics (waste rate, sell-through %) | 01, 02 | Demonstrated |
-| Rolling averages, RANK | 05 (forecasting) | Planned |
-| Subqueries, self-joins | 04 (product mix) | Planned |
-| Revenue-per-hour, booth-fee-adjusted profit | 03 (event performance) | Planned |
+| Rolling averages, RANK, LAG | 05 (forecasting) | Demonstrated |
+| Self-joins | 04 (product mix) | Demonstrated |
+| Revenue-per-hour, booth-fee-adjusted profit | 03 (event performance) | Demonstrated |
 
 ---
 
