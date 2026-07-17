@@ -15,3 +15,5 @@ Thumbs.db
 # Tableau
 *.twbx
 *.hyper
+# R
+.Rhistory
