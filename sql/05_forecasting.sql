@@ -420,7 +420,12 @@ ORDER BY
 --
 -- Approach:
 -- - Reuses the Query 2B baseline logic to generate the latest production baseline.
--- - Re-declares the volatility calculation logic from 01 Query 4.
+-- - Volatility is calculated from monthly_product_demand (the same
+--   zero-filled scaffold built in Query 1), joined to products to filter
+--   is_seasonal = 0 and is_active = 1, instead of re-deriving a separate
+--   monthly series from raw orders. The prior version skipped genuine
+--   zero-sales months instead of zero-filling them, which would silently
+--   understate volatility if a product ever had a true dropout month.
 -- - Calculates median volatility manually because MySQL does not support
 --   PERCENTILE_CONT.
 -- - Ranks non-seasonal products by avg_abs_pct_change, then averages the
@@ -572,43 +577,48 @@ current_baseline AS (
 ),
 
 /* Query 4 volatility logic */
-monthly_product_sales AS (
+volatility_monthly_sales AS (
     SELECT
-        oi.product_id,
-        DATE_FORMAT(o.order_date, '%Y-%m') AS sales_month,
-        SUM(oi.quantity) AS units_sold
-    FROM orders o
-    JOIN order_items oi
-        ON o.order_id = oi.order_id
+        mpd.product_id,
+        mpd.product_name,
+        mpd.sales_month,
+        mpd.units_sold
+    FROM monthly_product_demand mpd
     JOIN products p
-        ON oi.product_id = p.product_id
+        ON mpd.product_id = p.product_id
     WHERE p.is_seasonal = 0
-    GROUP BY
-        oi.product_id,
-        DATE_FORMAT(o.order_date, '%Y-%m')
+      AND p.is_active = 1
 ),
-monthly_pct_change AS (
+lagged_months AS (
     SELECT
         product_id,
+        product_name,
         sales_month,
         units_sold,
         LAG(units_sold) OVER (
             PARTITION BY product_id
             ORDER BY sales_month
         ) AS previous_month_units
-    FROM monthly_product_sales
+    FROM volatility_monthly_sales
+),
+monthly_changes AS (
+    SELECT
+        product_id,
+        product_name,
+        sales_month,
+        CASE
+            WHEN previous_month_units = 0 THEN NULL
+            WHEN previous_month_units IS NULL THEN NULL
+            ELSE (units_sold - previous_month_units)
+                / previous_month_units
+        END AS pct_change
+    FROM lagged_months
 ),
 volatility_metrics AS (
     SELECT
         product_id,
-        AVG(
-            ABS(
-                (units_sold - previous_month_units)
-                / NULLIF(previous_month_units, 0)
-            )
-        ) AS avg_abs_pct_change
-    FROM monthly_pct_change
-    WHERE previous_month_units IS NOT NULL
+        AVG(ABS(pct_change)) AS avg_abs_pct_change
+    FROM monthly_changes
     GROUP BY
         product_id
 ),
