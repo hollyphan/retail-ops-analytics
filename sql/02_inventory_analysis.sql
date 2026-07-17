@@ -106,4 +106,31 @@ FROM events e
 JOIN event_sales es
     ON e.event_id = es.event_id
 GROUP BY e.event_type
-ORDER BY avg_estimated_attendance DESC;
+ORDER BY avg_estimated_attendance DESC;-- Supporting Check: Produced-to-Sold Ratio by Event Type
+-- Business Question: Is market overproduced relative to sales by a
+-- larger margin than other event types, and could that help explain
+-- its lower sell-through rate observed in Query 2?
+-- Approach: AVG(quantity_produced) / AVG(quantity_sold) is used as the
+-- primary ratio rather than dividing MIN/MAX by an average, since an
+-- extremum divided by an average produces a number with no clear
+-- interpretation. MIN/MAX are retained as separate descriptive columns
+-- showing production spread within each event type, not folded into
+-- the ratio itself. This uses only persisted quantity_produced/sold
+-- values -- it does not attempt to reconstruct the data generator's
+-- internal production-floor random draw, which is not recoverable from
+-- persisted data (see generate_data.py: qty_produced = max(qty_sold +
+-- buffer, random.randint(lo, hi)) -- only the max survives).
+
+SELECT
+    e.event_type,
+    ROUND(AVG(i.quantity_produced), 2) AS avg_quantity_produced,
+    ROUND(AVG(i.quantity_sold), 2) AS avg_units_sold_per_product,
+    ROUND(AVG(i.quantity_produced) / AVG(i.quantity_sold), 2) AS produced_to_sold_ratio,
+    MIN(i.quantity_produced) AS min_quantity_produced,
+    MAX(i.quantity_produced) AS max_quantity_produced
+FROM inventory AS i
+JOIN events AS e
+    ON i.event_id = e.event_id
+WHERE e.event_type != 'online_pickup'
+GROUP BY e.event_type
+ORDER BY produced_to_sold_ratio DESC;
