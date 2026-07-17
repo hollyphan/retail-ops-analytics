@@ -85,6 +85,37 @@ ORDER BY ABS(
 ) DESC;
 
 
+-- Supporting Check: Average Revenue Per Unit
+-- Business Question: Does per-unit price vary enough across products
+-- to explain the rank-gap disagreements found in Query 2?
+-- Approach: Reuses the same product_metrics shape as Query 2
+-- (units_sold, revenue), adding a single derived ratio. Ordered
+-- ascending so the lowest per-unit-revenue products are easy to spot
+-- against Query 2's rank-gap products.
+
+WITH product_metrics AS (
+    SELECT
+        p.product_id,
+        p.product_name,
+        COALESCE(SUM(oi.quantity), 0) AS units_sold,
+        COALESCE(SUM(oi.quantity * oi.unit_price), 0) AS revenue
+    FROM products AS p
+    LEFT JOIN order_items AS oi
+        ON p.product_id = oi.product_id
+    GROUP BY
+        p.product_id,
+        p.product_name
+)
+
+SELECT
+    product_name,
+    units_sold,
+    revenue,
+    ROUND(revenue / NULLIF(units_sold, 0), 4) AS avg_revenue_per_unit
+FROM product_metrics
+ORDER BY avg_revenue_per_unit ASC;
+
+
 -- Query 3: Seasonal Demand Pattern Analysis
 -- Business Question:
 -- Do products designated as seasonal actually perform better

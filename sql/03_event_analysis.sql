@@ -65,6 +65,47 @@ ORDER BY
     efficiency_rank;
  
  
+-- Supporting Check: Cafe Popup Revenue by Duration
+-- Business Question: Does cafe_popup revenue scale with booked
+-- duration, or does efficiency drop as duration increases?
+-- Approach: Reuses the same event_revenue CTE and exclusion logic as
+-- Query 1. Filtered to cafe_popup only and grouped by duration_hours,
+-- since this pattern was specific to that event type -- festival and
+-- market showed no comparable duration effect.
+
+WITH event_revenue AS (
+    SELECT
+        e.event_id,
+        e.event_type,
+        e.duration_hours,
+        e.booth_fee,
+        ROUND(COALESCE(SUM(oi.line_total), 0), 2) AS revenue,
+        ROUND(
+            COALESCE(SUM(oi.line_total), 0) - e.booth_fee,
+            2
+        ) AS net_revenue
+    FROM events AS e
+    LEFT JOIN orders AS o
+        ON e.event_id = o.event_id
+    LEFT JOIN order_items AS oi
+        ON o.order_id = oi.order_id
+    WHERE e.event_type = 'cafe_popup'
+    GROUP BY e.event_id
+)
+
+SELECT
+    duration_hours,
+    COUNT(*) AS event_count,
+    ROUND(AVG(revenue), 2) AS avg_revenue,
+    ROUND(
+        AVG(net_revenue / NULLIF(duration_hours, 0)),
+        2
+    ) AS avg_net_revenue_per_hour
+FROM event_revenue
+GROUP BY duration_hours
+ORDER BY duration_hours;
+
+
 -- Query 2: Neighborhood Performance
 -- Business Question:
 -- Which neighborhoods generate the strongest overall sales, and
