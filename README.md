@@ -203,10 +203,12 @@ by flavor for upcoming events.
 
 ## How to Run
 
-1. Run `sql/schema.sql` to create the database and all tables
-2. Run the Python data generation script to populate `data/`
-3. Load CSVs using `sql/load_data.sql`
-4. Execute analysis files in numbered order
+All commands below assume you are in the repository root (`retail-ops-analytics/`).
+
+1. Create the database and tables: `mysql -u root -p < sql/schema.sql`
+2. Generate synthetic data into `data/`: `python3 generate_data.py`
+3. Load the CSVs (requires `--local-infile=1`): `mysql --local-infile=1 -u root -p retail_ops_analytics < sql/load_data.sql`
+4. Execute analysis files in numbered order, e.g.: `mysql -u root -p retail_ops_analytics < sql/01_demand_analysis.sql`
 
 **Requirements:** MySQL 9.7+, Python 3.x, TablePlus (optional GUI)
 

@@ -9,7 +9,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- products
 TRUNCATE TABLE products;
 
-LOAD DATA LOCAL INFILE '/Users/hollyphan/documents/retail-ops-analytics/data/products.csv'
+LOAD DATA LOCAL INFILE 'data/products.csv'
 INTO TABLE products
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
@@ -23,7 +23,7 @@ SET
 -- events
 TRUNCATE TABLE events;
 
-LOAD DATA LOCAL INFILE '/Users/hollyphan/documents/retail-ops-analytics/data/events.csv'
+LOAD DATA LOCAL INFILE 'data/events.csv'
 INTO TABLE events
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
@@ -39,7 +39,7 @@ SET
 -- customers
 TRUNCATE TABLE customers;
 
-LOAD DATA LOCAL INFILE '/Users/hollyphan/documents/retail-ops-analytics/data/customers.csv'
+LOAD DATA LOCAL INFILE 'data/customers.csv'
 INTO TABLE customers
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
@@ -51,7 +51,7 @@ IGNORE 1 ROWS
 -- orders
 TRUNCATE TABLE orders;
 
-LOAD DATA LOCAL INFILE '/Users/hollyphan/documents/retail-ops-analytics/data/orders.csv'
+LOAD DATA LOCAL INFILE 'data/orders.csv'
 INTO TABLE orders
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
@@ -62,7 +62,7 @@ IGNORE 1 ROWS
 -- order_items
 TRUNCATE TABLE order_items;
 
-LOAD DATA LOCAL INFILE '/Users/hollyphan/documents/retail-ops-analytics/data/order_items.csv'
+LOAD DATA LOCAL INFILE 'data/order_items.csv'
 INTO TABLE order_items
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
@@ -74,7 +74,7 @@ IGNORE 1 ROWS
 -- inventory
 TRUNCATE TABLE inventory;
 
-LOAD DATA LOCAL INFILE '/Users/hollyphan/documents/retail-ops-analytics/data/inventory.csv'
+LOAD DATA LOCAL INFILE 'data/inventory.csv'
 INTO TABLE inventory
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
