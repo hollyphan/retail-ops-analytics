@@ -27,22 +27,34 @@ Test shorter cafe_popup bookings (around 3 hours) as the default, and check whet
 ## Query 2: Neighborhood Performance
 
 **Business Question**
-Which neighborhoods perform best? Is neighborhood a real driver of performance, or is it confounded by which event types happen to be hosted where?
+Which neighborhoods generate the strongest overall sales, and how repeatable is that performance per appearance?
 
 **What the Data Shows**
-Ranked by total net revenue, Convoy leads ($8,930.07) followed by North Park ($6,354.08), Little Italy ($3,120.81), Kearny Mesa ($1,366.62), Barrio Logan ($1,122.57), and Mission Hills ($623.87). But Convoy's lead is a volume effect: 16 events versus North Park's 15, both dominated by cafe_popup (13 events each). On avg_net_revenue_per_event alone, Convoy ($558.13) actually looks stronger than North Park ($423.61), which suggested a location effect worth checking. Little Italy, Kearny Mesa, and Barrio Logan all show higher per-event averages, but at n=3, n=1, and n=1 respectively, none of those are stable enough to support a neighborhood claim.
+Ranked by total net revenue, Convoy leads ($8,930.07) followed by North Park ($6,354.08), Little Italy ($3,120.81), Kearny Mesa ($1,366.62), Barrio Logan ($1,122.57), and Mission Hills ($623.87). Convoy's lead is partly a volume effect: 16 events versus North Park's 15, both dominated by cafe_popup (13 events each). On avg_net_revenue_per_event alone, Convoy ($558.13) actually looks stronger than North Park ($423.61), which suggests a possible location effect worth checking. Little Italy, Kearny Mesa, Barrio Logan, and Mission Hills all show n=3, n=1, n=1, and n=1 respectively — none stable enough to support a neighborhood claim.
 
-Breaking the comparison out by neighborhood and event_type isolates the confound. Within cafe_popup specifically, the only format with a matched sample at both locations:
+**So What**
+Neighborhood ranking on raw totals looks meaningful, but Convoy and North Park's event-type mix is not identical, so this table alone can't separate a neighborhood effect from an event-type effect. Kearny Mesa, Barrio Logan, Little Italy, and Mission Hills are single- or thin-sample observations, not neighborhood patterns. Query 3 isolates the confound by holding event type constant.
+
+**Recommendation**
+Do not use total or per-event net revenue by neighborhood as a location-quality signal on its own — event-type mix differs by location and has to be controlled for first. See Query 3.
+
+## Query 3: Neighborhood x Event Type Breakdown
+
+**Business Question**
+When comparing the same event format, does one neighborhood outperform another? This isolates location from event-type mix, which Query 2 cannot do on its own.
+
+**What the Data Shows**
+Within cafe_popup specifically, the only format with a matched sample at both locations:
 
 | Neighborhood | Events | Avg Net Revenue/Event |
 |---|---|---|
 | Convoy | 13 | $421.79 |
 | North Park | 13 | $417.19 |
 
-A $4.60 gap across 13 events each is noise. Convoy's higher blended average in the neighborhood-only table came entirely from its 3 extra festival events, not from Convoy outperforming North Park at the same event format. Festival events net roughly 2.5 to 3 times what cafe_popup events net regardless of neighborhood (Convoy festivals average $1,148.92/event, Little Italy $1,278.01/event, both well above either neighborhood's cafe_popup average).
+A $4.60 gap across 13 events each is noise. Convoy's higher blended average in Query 2 came entirely from its 3 extra festival events, not from Convoy outperforming North Park at the same event format. Festival events net roughly 2.5 to 3 times what cafe_popup events net regardless of neighborhood (Convoy festivals average $1,148.92/event, Little Italy $1,278.01/event, both well above either neighborhood's cafe_popup average).
 
 **So What**
-Once event format is held constant, Convoy and North Park are statistically indistinguishable as locations. The apparent neighborhood ranking in the initial query was an artifact of event-type mix, not evidence that one location is a better market than the other. Event format, not neighborhood, is the stronger driver of per-event net revenue in this dataset. Kearny Mesa, Barrio Logan, Little Italy, and Mission Hills all have samples too thin (n=1 to n=3) to support any location-quality conclusion; they are single-event observations, not neighborhood patterns.
+Once event format is held constant, Convoy and North Park are statistically indistinguishable as locations. The neighborhood ranking in Query 2 was an artifact of event-type mix, not evidence that one location outperforms the other. Event format, not neighborhood, is the stronger driver of per-event net revenue in this dataset.
 
 **Recommendation**
-Prioritize booking more festival- and market-format events over cafe_popup, since format drives net revenue per appearance far more than neighborhood choice does. Do not use total net revenue by neighborhood as a location-quality signal without controlling for event-type mix first. Before treating Little Italy, Kearny Mesa, or Barrio Logan as promising locations, more events need to run there to build a sample large enough to trust.
+Prioritize booking more festival- and market-format events over cafe_popup, since format drives net revenue per appearance far more than neighborhood choice does. Before treating Little Italy, Kearny Mesa, or Barrio Logan as promising locations, more events need to run there to build a sample large enough to trust.
