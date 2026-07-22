@@ -465,7 +465,7 @@ def generate_orders_and_items(events, customers, products):
          "quantity", "unit_price", "line_total"],
         order_items
     )
-    return inventory_tracker
+    return orders, inventory_tracker
 
 
 # inventory
@@ -526,7 +526,31 @@ def main():
     customers = generate_customers(events)
 
     print("generating orders and order_items...")
-    inventory_tracker = generate_orders_and_items(events, customers, products)
+    orders, inventory_tracker = generate_orders_and_items(events, customers, products)
+
+    # backfill acquisition fields from actual first order, drop non-purchasers
+    from collections import defaultdict
+    orders_by_customer = defaultdict(list)
+    for o in orders:
+        orders_by_customer[o["customer_id"]].append(o)
+
+    event_map = {e["event_id"]: e for e in events}
+    corrected_customers = []
+    for c in customers:
+        cust_orders = orders_by_customer.get(c["customer_id"])
+        if not cust_orders:
+            continue  # drop non-purchasing customer
+        first_order = sorted(cust_orders, key=lambda o: (o["order_date"], o["order_id"]))[0]
+        c["acquisition_event_id"] = first_order["event_id"]
+        c["acquisition_date"] = first_order["order_date"]
+        corrected_customers.append(c)
+
+    write_csv(
+        CUSTOMERS_FILE,
+        ["customer_id", "first_name", "email",
+         "acquisition_event_id", "acquisition_date", "zip_code"],
+        corrected_customers
+    )
 
     print("generating inventory...")
     generate_inventory(events, products, inventory_tracker)
