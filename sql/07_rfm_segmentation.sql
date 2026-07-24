@@ -12,9 +12,19 @@
 --   Monetary: NTILE(4) based on total spend
 --     (range $5.00-$108.99, avg $27.10, stddev $17.92, 57 distinct values; verified via diagnostic query).
 -- Final output includes RFM code and business segment labels.
--- Segment priority: Can't Lose Them is evaluated before At Risk Loyal Customers,
--- giving high monetary value priority over high frequency for inactive customers,
--- since high-value inactive customers warrant stronger win-back priority.
+-- Segments (7 total):
+--   Champions                 - strict top tier: r=4, f=4, m=4
+--   Loyal High-Value Customers - r>=3, f>=3, m>=3, excluding strict Champions
+--   Loyal Customers            - r>=3, f>=2, not already captured above
+--   Recent Customers           - r>=3, f=1
+--   Can't Lose Them            - r<=2, m>=3 (inactive but historically high value)
+--   At Risk Loyal Customers    - r<=2, f>=3, m<3 (inactive, frequent, not top monetary)
+--   Hibernating                - r<=2, remaining low-value inactive customers
+-- Segment priority notes:
+--   Champions before Loyal High-Value Customers: strict condition is a subset of the looser one.
+--   Loyal High-Value Customers before Loyal Customers: f>=3 is a subset of f>=2.
+--   Can't Lose Them before At Risk Loyal Customers: monetary value prioritized over frequency
+--     for inactive customers, since high-value inactive customers warrant stronger win-back priority.
 
 WITH analysis_date AS (
     SELECT
@@ -96,27 +106,40 @@ SELECT
     m_score,
     rfm_code,
     CASE
+        -- Highest-value customers: top recency, top frequency, top monetary
+        WHEN r_score = 4
+             AND f_score = 4
+             AND m_score = 4
+            THEN 'Champions'
+
+        -- High-value repeat customers: strong across all dimensions
+        -- but do not meet the strict champion criteria
         WHEN r_score >= 3
              AND f_score >= 3
              AND m_score >= 3
-            THEN 'Champions'
+            THEN 'Loyal High-Value Customers'
 
+        -- Recent repeat customers who are not high-value
         WHEN r_score >= 3
              AND f_score >= 2
             THEN 'Loyal Customers'
 
+        -- Recent one-time buyers
         WHEN r_score >= 3
              AND f_score = 1
             THEN 'Recent Customers'
 
+        -- Inactive but historically valuable customers
         WHEN r_score <= 2
              AND m_score >= 3
             THEN 'Can''t Lose Them'
 
+        -- Inactive frequent customers who are not top monetary
         WHEN r_score <= 2
              AND f_score >= 3
             THEN 'At Risk Loyal Customers'
 
+        -- Remaining inactive low-value customers
         ELSE 'Hibernating'
 
     END AS customer_segment
